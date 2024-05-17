@@ -1,4 +1,4 @@
-const functions = (
+export const functions = (
 function renderBookPreviews() {
     const starting = document.createDocumentFragment();
 
