@@ -5,30 +5,26 @@ import { books, authors, genres, BOOKS_PER_PAGE } from './data.js'
 let page = 1;
 let matches = books
 
-// Function for rendering book previews
-function renderBookPreviews() {
-    const starting = document.createDocumentFragment();
+class bookPreview extends HTMLElement {
+  static get observedAttributes() {
+    return ["author", "image", "id", "title"];
+  }
 
-    for (const { author, id, image, title } of matches.slice(0, BOOKS_PER_PAGE)) {
-    const element = document.createElement('button');
-    element.classList = 'preview';
-    element.setAttribute('data-preview', id);
-    element.innerHTML = `
-        <img
-            class="preview__image"
-            src="${image}"
-        />
-        
-        <div class="preview__info">
-            <h3 class="preview__title">${title}</h3>
-            <div class="preview__author">${authors[author]}</div>
-        </div>
-    `;
-    starting.appendChild(element);
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+  }
+
+  connectedCallback() {
+    this.render();
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue !== newValue) {
+      this.render();
     }
-    document.querySelector('[data-list-items]').appendChild(starting)
-}
-renderBookPreviews(); //function called here
+  }
+
 
 // Function for creating  and appending options fragment
 function createOptionsFragment() { 
