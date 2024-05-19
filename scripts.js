@@ -1,12 +1,52 @@
-import { books, authors, genres, BOOKS_PER_PAGE } from './data.js'
-import { functions } from './functions.js';
+// Imports necessary data from data.js file
+import { books, authors, genres, BOOKS_PER_PAGE } from './data.js' 
 
+// Page number and Matches variable initialization
 let page = 1;
 let matches = books
 
+// Function for rendering book previews
+function renderBookPreviews() {
+    const starting = document.createDocumentFragment();
 
-renderBookPreviews();
-createOptionsFragment();
+    for (const { author, id, image, title } of matches.slice(0, BOOKS_PER_PAGE)) {
+    const element = document.createElement('button');
+    element.classList = 'preview';
+    element.setAttribute('data-preview', id);
+    element.innerHTML = `
+        <img
+            class="preview__image"
+            src="${image}"
+        />
+        
+        <div class="preview__info">
+            <h3 class="preview__title">${title}</h3>
+            <div class="preview__author">${authors[author]}</div>
+        </div>
+    `;
+    starting.appendChild(element);
+    }
+    document.querySelector('[data-list-items]').appendChild(starting)
+}
+renderBookPreviews(); //function called here
+
+// Function for creating  and appending options fragment
+function createOptionsFragment() { 
+    const genreHtml = document.createDocumentFragment();
+    const firstGenreElement = document.createElement('option');
+    firstGenreElement.value = 'any';
+    firstGenreElement.innerText = 'All Genres';
+    genreHtml.appendChild(firstGenreElement);
+
+for (const [id, name] of Object.entries(genres)) {
+    const element = document.createElement('option');
+    element.value = id;
+    element.innerText = name;
+    genreHtml.appendChild(element);
+}
+document.querySelector('[data-search-genres]').appendChild(genreHtml)
+}
+createOptionsFragment(); //function called here
 
 const authorsHtml = document.createDocumentFragment();
 const firstAuthorElement = document.createElement('option');
@@ -41,7 +81,7 @@ document.querySelector('[data-list-button]').innerHTML = `
     <span class="list__remaining"> (${(matches.length - page * BOOKS_PER_PAGE > 0 ? matches.length - page * BOOKS_PER_PAGE : 0)})</span>
 `;
 
-//event listeners 
+//Event listeners 
 document.querySelector('[data-search-cancel]').addEventListener('click', () => {
     document.querySelector('[data-search-overlay]').open = false;
 });
@@ -139,6 +179,13 @@ document.querySelector('[data-search-form]').addEventListener('submit', (event) 
     document.querySelector('[data-search-overlay]').open = false
 });
 
+//function to calculate and return the remaining books as the show more button is pressed
+function remainingBooks() {
+    document.querySelector('[data-list-button]').innerHTML = 
+    `<span>Show more</span>
+    <span class="list__remaining"> (${(matches.length - (page * BOOKS_PER_PAGE)) > 0 ? matches.length - page * BOOKS_PER_PAGE : 0 })</span>
+    `;
+}
 
 document.querySelector('[data-list-button]').addEventListener('click', () => {
     const fragment = document.createDocumentFragment()
