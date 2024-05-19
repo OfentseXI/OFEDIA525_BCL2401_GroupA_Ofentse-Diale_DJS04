@@ -5,20 +5,26 @@ import { books, authors, genres, BOOKS_PER_PAGE } from './data.js'
 let page = 1;
 let matches = books
 
+// Defines the 'bookPreview' element which extends HTMLElement
 class bookPreview extends HTMLElement {
+  
+// Specify the attributes to observe when making changes
   static get observedAttributes() {
     return ["author", "image", "id", "title"];
   }
 
+// Constructor to set up the shadow DOM
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
   }
 
+// Called when the element is added to the document
   connectedCallback() {
     this.render();
   }
 
+// Called whenever one of the observed attributes changes
   attributeChangedCallback(name, oldValue, newValue) {
     if (oldValue !== newValue) {
       this.render();
